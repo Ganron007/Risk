@@ -1,0 +1,37 @@
+{
+  "$schema": "https://json.schemastore.org/sarif-2.1.0.json",
+  "version": "2.1.0",
+  "runs": [
+    {
+      "tool": {
+        "driver": {
+          "name": "praxis",
+          "informationUri": "https://example.local/praxis",
+          "version": "0.1.0",
+          "rules": [
+            {
+              "id": "secret-hardcoded",
+              "shortDescription": { "text": "Hardcoded secret pattern" },
+              "defaultConfiguration": { "level": "warning" }
+            }
+          ]
+        }
+      },
+      "results": [
+        {
+          "ruleId": "secret-hardcoded",
+          "level": "warning",
+          "message": { "text": "Possible API key assignment in chatbot app" },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": { "uri": "apps/chatbot/app.py" },
+                "region": { "startLine": 42 }
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

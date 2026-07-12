@@ -1,0 +1,11 @@
+artifacts/
+.venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+config/eramba.local.env
+docker/.env
+*.egg-info/
+docs/img/*.png
+!docs/img/.gitkeep
+

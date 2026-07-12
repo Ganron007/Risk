@@ -1,0 +1,20 @@
+{
+  "id": "finding-revai-001",
+  "source": "revai",
+  "severity": "critical",
+  "title": "RevAI verdict: Lumma Stealer family — malicious score 95",
+  "description": "CADRE-RevAI pipeline classified sample as Lumma Stealer (malicious, score 95). IOCs and YARA produced. Handling risk if sample leaves isolated analysis VM.",
+  "asset_id": "AST-035",
+  "discovered_at": "2026-06-30T16:00:00Z",
+  "evidence": "samples/findings/revai-lumma-verdict.json",
+  "likelihood": 3,
+  "impact": 2,
+  "mitre": ["T1204", "T1056"],
+  "related_risk_id": "RISK-014",
+  "raw": {
+    "verdict": "malicious",
+    "family": "Lumma Stealer",
+    "score": 95,
+    "sha256": "353ddce78d58aef2083ca0ac271af93659cf0039b0b29d0d169fc015bd3610bc"
+  }
+}

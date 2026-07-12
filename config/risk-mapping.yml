@@ -1,0 +1,111 @@
+# CADRE-Risk — asset → owner → classification → default controls
+# R2-S1.5 — machine-readable map for risk_engine / Eramba import later
+
+version: 1
+classification_rank:
+  Restricted: 3
+  Confidential: 2
+  Internal: 1
+
+# Default NIST CSF functions referenced by control register
+nist_csf_functions:
+  - ID  # Identify
+  - PR  # Protect
+  - DE  # Detect
+  - RS  # Respond
+  - RC  # Recover
+
+assets:
+  AST-001:
+    owner: Infra Lead
+    classification: Restricted
+    default_controls: [CTL-AD-BASELINE, CTL-ADCS-MONITOR, CTL-SIEM-IDENTITY]
+  AST-002:
+    owner: Infra Lead
+    classification: Restricted
+    default_controls: [CTL-AD-BASELINE, CTL-SIEM-IDENTITY]
+  AST-003:
+    owner: Infra Lead
+    classification: Restricted
+    default_controls: [CTL-AD-BASELINE, CTL-SIEM-IDENTITY, CTL-TRUST-REVIEW]
+  AST-004:
+    owner: App team
+    classification: Confidential
+    default_controls: [CTL-HOST-HARDEN, CTL-SIEM-ENDPOINT, CTL-SQL-CONTROLS]
+  AST-005:
+    owner: App team
+    classification: Confidential
+    default_controls: [CTL-HOST-HARDEN, CTL-SCCM-REVIEW, CTL-SIEM-ENDPOINT]
+  AST-006:
+    owner: App team
+    classification: Confidential
+    default_controls: [CTL-LINUX-HARDEN, CTL-SIEM-ENDPOINT]
+  AST-007:
+    owner: SOC manager
+    classification: Internal
+    default_controls: [CTL-EDR-MDE, CTL-SIEM-ENDPOINT]
+  AST-010:
+    owner: SOC Lead
+    classification: Restricted
+    default_controls: [CTL-SIEM-AVAIL, CTL-ACCESS-SIEM, CTL-DETECTION-RULES]
+  AST-011:
+    owner: DFIR Lead
+    classification: Confidential
+    default_controls: [CTL-VR-ACCESS, CTL-COC]
+  AST-012:
+    owner: SOC Lead
+    classification: Confidential
+    default_controls: [CTL-NSM, CTL-DETECTION-RULES]
+  AST-013:
+    owner: Infra Lead
+    classification: Internal
+    default_controls: [CTL-ANSIBLE-ACCESS, CTL-CHANGE-MGMT]
+  AST-020:
+    owner: Cloud security lead
+    classification: Restricted
+    default_controls: [CTL-ENTRA-PIM, CTL-CLOUD-MONITOR]
+  AST-021:
+    owner: Cloud security lead
+    classification: Restricted
+    default_controls: [CTL-ENTRA-PIM, CTL-CLOUD-MONITOR]
+  AST-022:
+    owner: Infra Lead
+    classification: Restricted
+    default_controls: [CTL-CLOUD-SYNC-REVIEW]
+  AST-023:
+    owner: Cloud security lead
+    classification: Confidential
+    default_controls: [CTL-CLOUD-MONITOR]
+  AST-030:
+    owner: DFIR Lead
+    classification: Restricted
+    default_controls: [CTL-COC, CTL-EVIDENCE-ACCESS, CTL-HITL]
+  AST-031:
+    owner: SOC Lead
+    classification: Confidential
+    default_controls: [CTL-ACCESS-SIEM, CTL-SIEM-AVAIL]
+  AST-032:
+    owner: DFIR Lead
+    classification: Restricted
+    default_controls: [CTL-COC, CTL-VR-ACCESS]
+  AST-033:
+    owner: App team
+    classification: Confidential
+    default_controls: [CTL-SQL-CONTROLS]
+  AST-034:
+    owner: Infra Lead
+    classification: Restricted
+    default_controls: [CTL-ADCS-MONITOR, CTL-SIEM-IDENTITY]
+  AST-035:
+    owner: R&D Lead
+    classification: Internal
+    default_controls: [CTL-LAB-ISOLATION, CTL-PRAXIS-SCAN]
+
+# Likelihood hints by finding source (1–3) — overridden per finding
+source_likelihood_defaults:
+  darkai: 2
+  praxis: 2
+  revai: 3
+  elastic: 2
+  velociraptor: 3
+  cadre_campaign: 3

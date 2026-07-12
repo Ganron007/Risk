@@ -1,0 +1,19 @@
+{
+  "id": "finding-vr-001",
+  "source": "velociraptor",
+  "severity": "high",
+  "title": "Velociraptor hunt: suspicious scheduled task on mbr01",
+  "description": "VR hunt returned a non-baseline scheduled task created after xp_cmdshell / GodPotato path in campaign Phase 3. Artifact retained on AST-032.",
+  "asset_id": "AST-004",
+  "discovered_at": "2026-06-04T18:30:00Z",
+  "evidence": "samples/findings/velociraptor-schtask.json",
+  "likelihood": 3,
+  "impact": 3,
+  "mitre": ["T1053.005"],
+  "related_risk_id": "RISK-004",
+  "raw": {
+    "hunt": "Windows.Persistence.ScheduledTasks",
+    "host": "mbr01.child.cadre.local",
+    "task_name": "CadreUpdate"
+  }
+}

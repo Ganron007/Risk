@@ -1,0 +1,19 @@
+{
+  "id": "finding-elastic-001",
+  "source": "elastic",
+  "severity": "critical",
+  "title": "Elastic alert: possible DCSync (4662 replication GUID)",
+  "description": "SIEM rule fired on WinSec 4662 referencing DS-Replication-Get-Changes property GUID from a non-DC subject — classic DCSync telemetry pattern from CADRE campaign validation.",
+  "asset_id": "AST-001",
+  "discovered_at": "2026-06-04T12:00:00Z",
+  "evidence": "samples/findings/elastic-dcsync-alert.json",
+  "likelihood": 3,
+  "impact": 3,
+  "mitre": ["T1003.006"],
+  "related_risk_id": "RISK-001",
+  "raw": {
+    "rule_id": "cadre-dcsync",
+    "event_id": 4662,
+    "index": "logs-system.security-*"
+  }
+}

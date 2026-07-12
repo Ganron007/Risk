@@ -1,0 +1,22 @@
+asset_id,hostname_or_name,ip_or_location,os_or_type,domain_or_plane,classification,owner,category,notes
+AST-001,dc01,192.168.77.10,Server 2025,cadre.local,Restricted,Infra Lead,windows_ad,Forest root DC; ADCS CA; Cloud Sync agent
+AST-002,dc02,192.168.77.11,Server 2025,child.cadre.local,Restricted,Infra Lead,windows_ad,Child DC
+AST-003,dc03,192.168.77.12,Server 2025,range.local,Restricted,Infra Lead,windows_ad,External forest DC; AES-only; dMSA
+AST-004,mbr01,192.168.77.22,Server 2025,child.cadre.local,Confidential,App team,windows_member,MSSQL + IIS; unconstrained delegation
+AST-005,mbr02,192.168.77.23,Server 2025,range.local,Confidential,App team,windows_member,SQL + WSUS + VSC + SCCM site CAD
+AST-006,linux01,192.168.77.40,Ubuntu 24.04,cadre.local,Confidential,App team,linux_member,AD-joined; MSSQL-on-Linux; NFS-krb5; Podman
+AST-007,ws01,192.168.77.62,Win11 Ent 23H2,child.cadre.local,Internal,SOC manager,endpoint,Analyst workstation; MDE/campaign beachhead
+AST-010,elk,192.168.77.50,Ubuntu 24.04,soc,Restricted,SOC Lead,soc,Elasticsearch + Kibana + Fleet
+AST-011,vr,192.168.77.51,Ubuntu 24.04,soc,Confidential,DFIR Lead,soc,Velociraptor server + MCP
+AST-012,monitor,192.168.77.55,Ubuntu 24.04,soc,Confidential,SOC Lead,soc,Zeek + Suricata + Arkime + SiLK
+AST-013,provisioning,192.168.77.60,Ubuntu 24.04,ops,Internal,Infra Lead,ops,Ansible runner
+AST-020,Entra ID (M365 dev tenant),cloud,Entra ID,cloud,Restricted,Cloud security lead,cloud,Azure attack scenarios target
+AST-021,Azure subscription,cloud,Azure,cloud,Restricted,Cloud security lead,cloud,RBAC / PIM
+AST-022,Cloud Sync agent,on dc01,agent,cloud_hybrid,Restricted,Infra Lead,cloud,Sync to Entra
+AST-023,Azure Arc,→ dc01,agent,cloud_hybrid,Confidential,Cloud security lead,cloud,Arc-connected server
+AST-030,Client forensic evidence,DFIR case stores,data,data,Restricted,DFIR Lead,data,PII + legal; CoC critical
+AST-031,Elastic indices,elk,data,data,Confidential,SOC Lead,data,SIEM telemetry
+AST-032,Velociraptor artifacts,vr,data,data,Restricted,DFIR Lead,data,Collected forensic data
+AST-033,MSSQL databases,mbr01/mbr02/linux01,data,data,Confidential,App team,data,Business databases
+AST-034,ADCS CA,dc01,PKI,cadre.local,Restricted,Infra Lead,pki,ESC1-15 attack surface in lab
+AST-035,DarkAI lab,172.20.0.0/24,Docker,research,Internal,R&D Lead,research,Must stay isolated from AST-030
