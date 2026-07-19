@@ -3,9 +3,13 @@ artifacts/
 __pycache__/
 *.pyc
 .pytest_cache/
-config/eramba.local.env
-docker/.env
+docker/verifywise.env
+docker/vendor/
 *.egg-info/
 docs/img/*.png
 !docs/img/.gitkeep
+!docs/img/ciso-risk-register.png
+!docs/img/verifywise-ai-risk.png
+cookies.txt
+schema.yaml
 

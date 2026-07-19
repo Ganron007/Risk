@@ -1,14 +1,12 @@
 # CADRE-Risk — Plan v2 (execution SSoT)
 
 > **Created:** 2026-07-12  
-> **Status:** ACTIVE — Sprint 0–1 done; Sprint 2–3 **code done** 2026-07-13; **R2-S2.3** unblocked by Docker pivot (2026-07-13) — UI screenshot now reachable without a VM  
+> **Status:** ACTIVE — Sprint 0–3 **done** 2026-07-13; GRC sinks = **CISO Assistant** + **VerifyWise** only  
 > **Supersedes:** [`docs/PLAN.md`](docs/PLAN.md) (v1 planning dump — keep as reference for Cadre Corp fiction + full exercise ID catalog)  
 > **Cold-start:** This file → [`CHECKLIST.md`](CHECKLIST.md) → [`README.md`](README.md)  
 > **Operator context:** CISSP exam ~3 months out; daily CADRE lab testing concurrent; ~14h/day capacity. Risk slots fit *between* lab runs — do not block RevAI / DFIR-Nexus / DarkAI / Eva7ion daily practice.
 
-**Edition note (Sprint 2):** Eramba REST API is **Enterprise-only**. Community Edition uses `python -m src.eramba_export` CSV import — see [`docs/eramba-notes.md`](docs/eramba-notes.md).
-
-**Deployment pivot (2026-07-13):** The VM approach is **abandoned**. Eramba CE runs as a local **Docker stack** (`docker/` — Eramba app + MySQL 8 + Redis), mirroring the public demo at <https://demo.cloud.eramba.org/dashboard>. This unblocks **R2-S2.3** (UI screenshot) without standing up a VM. Rationale (operator): *"eramba VM sucks, so i go docker."* See **§3 Sprint 2** for the new Docker tasks (R2-S2.5–S2.8).
+**GRC sinks (2026-07-13):** **CISO Assistant** = classic GRC (REST API, frameworks). **VerifyWise** = AI governance (EU AI Act / ISO 42001 / NIST AI RMF for DarkAI / Praxis / RevAI). **Eramba was removed** from the repo (did not work for this lab) — do not reintroduce without an explicit decision.
 
 ---
 
@@ -20,15 +18,15 @@
 |-------|------------|-------|
 | **L1 — Enterprise context** | Cadre Corp profile, asset inventory, risk appetite, regulatory register | Domains 1, 2 |
 | **L2 — Exercises** | Worked CISSP risk exercises against *real CADRE findings* | Domains 1→8 over time |
-| **L3 — Tooling** | Score findings → Markdown board memo; later Eramba sink | Domains 1, 7 |
+| **L3 — Tooling** | Score findings → Markdown board memo; optional GRC UI sinks | Domains 1, 7 |
 
 **Rules (non-negotiable):**
 
-1. **Markdown is SSoT; Eramba is a sink.** Register + board memos must stand alone if Eramba is down.
+1. **Markdown is SSoT; GRC tools are sinks.** Register + board memos must stand alone if every Docker UI is down.
 2. **Findings-first.** Every scored risk cites a path under `samples/` or a documented tool output.
 3. **10 excellent Domain 1 exercises before 60 stubs.** Expand domains after Sprint 1 is green.
 4. **One writer repo:** `CADRE-Risk` only. Do not edit main CADRE ansible/campaign for Risk work.
-5. **No secrets in git.** Eramba creds → local env / ignored file (`config/eramba.local.env`).
+5. **No secrets in git.** Creds → `docker/*.env` / `config/*.local.env` (all gitignored).
 
 **Portfolio line (after Sprint 1):**  
 *Built a CISSP-aligned GRC lab on a real AD/SOC estate: asset inventory, risk register, control mapping, and automated board memos from security-tool findings.*
@@ -40,11 +38,12 @@
 | Project | How Risk uses it | Blocking? |
 |---------|------------------|-----------|
 | Main CADRE | Asset IDs from `docs/architecture.md` + campaign attack surfaces | No — cite docs / freeze samples |
-| CADRE-RevAI | Malware verdict / report samples | No — copy sample JSON into `samples/` |
+| CADRE-RevAI | Malware verdict / report samples → also VerifyWise AI use-case | No — copy sample JSON into `samples/` |
 | DFIR-Nexus | Incident / case summary samples | No — wait for frozen export or hand-write sample |
-| Praxis | SARIF from DarkAI / host scans | No — copy one SARIF into `samples/` |
-| CADRE-DarkAI | Prompt-injection audit JSONL | No — copy lines into `samples/` |
-| Eramba CE (Docker) | GRC UI (Sprint 2) — local stack, not a VM | Soft gate — Sprint 1 does **not** need it |
+| Praxis | SARIF from DarkAI / host scans → CISO Assistant finding / VerifyWise AI risk | No — copy one SARIF into `samples/` |
+| CADRE-DarkAI | Prompt-injection audit JSONL → VerifyWise AI risk | No — copy lines into `samples/` |
+| **CISO Assistant (Docker)** | **Primary classic-GRC sink** — REST API push of risks/controls/compliance | Soft gate — optional demos |
+| **VerifyWise (Docker)** | **AI-governance sink** — EU AI Act / ISO 42001 / NIST AI RMF for DarkAI/Praxis risks | Soft gate — optional demos |
 
 Daily lab testing continues on those projects. Risk work consumes **frozen samples**, not live coupling.
 
@@ -61,7 +60,7 @@ Daily lab testing continues on those projects. Risk work consumes **frozen sampl
 | **R2-S0.3** | `CHECKLIST.md` + this `plan_v2.md` + README aligned | Cold-start works |
 | **R2-S0.4** | Mark `docs/PLAN.md` as superseded | Banner at top of PLAN.md |
 
-### Sprint 1 — Portfolio MVP **without Eramba** (primary ship target)
+### Sprint 1 — Portfolio MVP **without GRC UIs** (primary ship target)
 
 Goal: openable artifacts for interviews + CISSP Domain 1 practice.
 
@@ -87,42 +86,21 @@ Goal: openable artifacts for interviews + CISSP Domain 1 practice.
 ```text
 python -m pytest tests/ -q
 python -m src.board_report --samples samples/findings/ --out artifacts/board-memo.md
-# board-memo.md + risk-register-baseline.md reviewable without Eramba
+# board-memo.md + risk-register-baseline.md reviewable without Docker UIs
 ```
 
-### Sprint 2 — Thin Eramba bridge (after Sprint 1 green)
+### Sprint 2 — GRC tool sinks (after Sprint 1 green)
 
-**Original tasks (code already done):**
+**Two-sink model only** (Eramba path deleted 2026-07-13 — did not work for this lab):
 
-| ID | Item | Status |
-|----|------|--------|
-| **R2-S2.1** | `docs/eramba-notes.md` — endpoint, auth model, CE limits (no secrets) | ✅ |
-| **R2-S2.2** | `src/eramba_client.py` — create/link asset + risk + control (Enterprise REST + CE dry-run) | ✅ |
-| **R2-S2.3** | E2E: one sample → score → Eramba UI; screenshot in README | **[!]→[~]** unblocked by Docker (was blocked on VM) |
-| **R2-S2.4** | Import asset CSV + baseline risks (or document CSV import fallback) | ✅ |
+| ID | Item | Done when |
+|----|------|-----------|
+| **R2-S2.9** | CISO Assistant compose + scripts (`cadre-risk-ciso-*`, HTTP `:8080`) | ✅ `scripts/ciso-up.ps1` + REST seed [`docs/ciso-notes.md`](docs/ciso-notes.md) + `ciso-seed-baseline.ps1` |
+| **R2-S2.10** | VerifyWise compose + scripts (`cadre-risk-vw-*`, `:18080`) + nginx 502 fix | ✅ `scripts/verifywise-up.ps1` + seed + [`docs/verifywise-notes.md`](docs/verifywise-notes.md) |
+| **R2-S2.11** | Hub doc for both sinks (ports, RAM note, screenshot targets) | ✅ [`docker/README.md`](docker/README.md) + [`docs/grc-sinks.md`](docs/grc-sinks.md) |
+| **R2-S2.12** | Screenshots: CISO + VerifyWise | ✅ `docs/img/ciso-risk-register.png` + `docs/img/verifywise-ai-risk.png` |
 
-**Docker tasks (new, 2026-07-13 — replace the VM approach):**
-
-| ID | Item | Done when | Path |
-|----|------|-----------|------|
-| **R2-S2.5** | Eramba CE compose stack — app + MySQL 8 + Redis | `docker compose -f docker/eramba-compose.yml up -d` brings UI to `http://localhost:8080` (or chosen port); initial wizard completes | `docker/eramba-compose.yml` |
-| **R2-S2.6** | `docker/.env.example` — DB passwords, ports, volume paths; real values in gitignored `docker/.env` | Copy `.example` → `.env`, fill, `docker compose config` validates | `docker/.env.example` |
-| **R2-S2.7** | `docker/README.md` — bring-up guide: pull, first-run wizard (DB seed, admin user, settings), CE vs Enterprise toggle, teardown/persistence, resource notes | Operator who has never used Docker can stand up Eramba CE from this doc alone | `docker/README.md` |
-| **R2-S2.8** | Wire existing CSV pack into Docker UI — import `artifacts/eramba-import/assets.csv` + `risks.csv` through the running container's web UI, screenshot → `docs/img/eramba-risk-register.png`, link from README | Screenshot committed; README "Blocker" section retired | closes **R2-S2.3** |
-
-**Docker design notes (locked for S2.5–S2.8):**
-
-- **Stack:** three services — `eramba` (official `eramba/eramba` image), `mysql` (MySQL 8.0 / MariaDB 10.6 per Eramba reqs), `redis` (cache). One compose file, one external network, three named volumes (`eramba_db`, `eramba_files`, `redis_cache`).
-- **Reference sources:** official [eramba/docker](https://github.com/eramba/docker) `1.x` branch `docker-compose.simple-install.yml` + `.env`; cross-checked against community builds [digitorus/eramba](https://github.com/digitorus/eramba) and [markz0r/eramba-community-docker](https://github.com/markz0r/eramba-community-docker) for cron handling.
-- **Ports:** Eramba HTTP on `127.0.0.1:8080` (loopback-only — this is a single-user lab, not an exposed service). MySQL/Redis **not** published (internal to the compose network).
-- **First-run:** Eramba's web wizard handles DB seed, admin account, and initial settings — no SQL hand-seeding. The compose file only wires the connection env (`DB_HOST`, `DB_DATABASE`, `DB_USERNAME`, `DB_PASSWORD`, `CACHE_URL`).
-- **Persistence:** named volumes so `docker compose down` (without `-v`) keeps data; `down -v` for a clean reset. Documented in `docker/README.md`.
-- **Cron:** Eramba needs hourly/daily/yearly jobs. CE image runs these inside the container (community builds add a sidecar — confirm which during S2.5 and document).
-- **No secrets in git:** DB passwords live in gitignored `docker/.env`, never in the compose file directly.
-- **CE vs Enterprise:** the same compose file runs Enterprise if you mount a license; the CSV path is CE-only. `eramba_client.py` already handles both editions.
-- **Existing CSV pack is unchanged** — `artifacts/eramba-import/{assets,risks}.csv` import through the Docker UI exactly as the VM would have. No `eramba_export.py` changes needed.
-
-If Eramba CE API is weak: **CSV/Excel import path** still counts as GRC-tool integration.
+**Run one stack at a time** on constrained hosts. CISO = classic GRC demos; VerifyWise = AI governance for DarkAI/RevAI/Praxis.
 
 ### Sprint 3 — Broader CISSP curriculum + richer ingest
 
@@ -191,7 +169,7 @@ You are already testing CADRE projects daily. Treat Risk as a **fixed daily bloc
 | Month | Risk focus | CISSP focus |
 |-------|------------|-------------|
 | **M1** | Finish Sprint 0 + Sprint 1 | Domain 1–2 heavy; Risk exercises *are* Domain 1 practice |
-| **M2** | Sprint 2 Eramba + Domain 2–7 exercise expansion | Domains 3–7; use Risk memos as essay/communication drill |
+| **M2** | Sprint 2 GRC sinks + Domain 2–7 exercise expansion | Domains 3–7; use Risk memos as essay/communication drill |
 | **M3** | Sprint 3 polish + mock board brief | Weak-domain review + full practice exams |
 
 ---
@@ -203,50 +181,44 @@ CADRE-Risk/
 ├── README.md
 ├── plan_v2.md              ← THIS FILE (execution SSoT)
 ├── CHECKLIST.md            ← flip statuses here first
-├── docker/                 ← Sprint 2 Docker pivot (R2-S2.5–S2.8)
-│   ├── eramba-compose.yml  ← Eramba CE + MySQL + Redis
-│   ├── .env.example        ← DB passwords, ports (copy → .env, gitignored)
-│   └── README.md           ← bring-up guide for Docker newcomers
+├── docker/                 ← Sprint 2 GRC sinks
+│   ├── ciso-compose.yml
+│   ├── verifywise-compose.yml
+│   └── README.md           ← bring-up guide
 ├── docs/
 │   ├── PLAN.md             ← v1 archive / reference
+│   ├── grc-sinks.md
+│   ├── ciso-notes.md
+│   ├── verifywise-notes.md
 │   ├── enterprise-context.md
-│   ├── risk-appetite-statement.md
-│   ├── regulatory-obligations.md
 │   ├── risk-register-baseline.md
-│   ├── control-register.md
-│   ├── finding-schema.md
-│   ├── eramba-notes.md     ← Sprint 2 (+ Docker deployment section)
 │   ├── exercises/          ← R-EX-001…
 │   └── examples/
 ├── config/
 │   ├── asset-inventory.csv
-│   ├── risk-mapping.yml
-│   └── eramba.local.env.example  ← Enterprise creds (CE users ignore)
+│   └── risk-mapping.yml
 ├── samples/findings/
 ├── src/
 │   ├── ingest.py
 │   ├── risk_engine.py
 │   ├── board_report.py
-│   ├── eramba_export.py    ← CSV pack generator (CE primary path)
-│   └── eramba_client.py    ← Enterprise REST + CE dry-run
+│   └── adapters/           ← optional live adapters
+├── scripts/                ← ciso-up / verifywise-up + seed
 ├── tests/
-└── artifacts/              ← generated memos + eramba-import CSV pack (gitignored or sample-only)
+└── artifacts/              ← generated board memos (gitignored)
 ```
 
 ---
 
 ## 8. Immediate next action
 
-Sprint 0–1 + Sprint 2 (S2.1–S2.4) + Sprint 3 are **done**. The only remaining work is the **Docker pivot** (S2.5–S2.8), which closes the last open item (R2-S2.3 screenshot).
+Sprint 2 GRC sinks (**CISO Assistant** + **VerifyWise**) are **done**. Eramba is **gone** from the tree.
 
-1. **R2-S2.5** — create `docker/eramba-compose.yml` (Eramba + MySQL + Redis).  
-2. **R2-S2.6** — create `docker/.env.example`; update `.gitignore` for `docker/.env` + volume state.  
-3. **R2-S2.7** — write `docker/README.md` (bring-up guide for a Docker newcomer).  
-4. **R2-S2.8** — stand up the stack, import the existing CSV pack through the UI, screenshot → `docs/img/eramba-risk-register.png` → link from README.  
-5. After each step: flip [`CHECKLIST.md`](CHECKLIST.md).
+**Practice anytime** (bring stacks back up after Docker Desktop restart — `down -v` wiped volumes):
 
-**Deferred until after the Docker stack is green:** update `docs/eramba-notes.md` with a "Docker deployment" section pointing at `docker/README.md`, and refresh `artifacts/eramba-import/IMPORT.md` to reference the Docker UI (`http://localhost:8080`) instead of the VM.
+1. Classic GRC — [`docs/ciso-notes.md`](docs/ciso-notes.md)  
+2. AI governance — [`docs/verifywise-notes.md`](docs/verifywise-notes.md)
 
 ---
 
-*Plan v2 — 2026-07-12; Docker pivot 2026-07-13. Execute sprints in order. CISSP exam ≈ 3 months; Risk supports Domain 1–2 practice without replacing book study.*
+*Plan v2 — 2026-07-12; CISO/VerifyWise sinks 2026-07-13; Eramba removed 2026-07-13. CISSP exam ≈ 3 months; Risk supports Domain 1–2 (+ AI gov Domain 3/8) without replacing book study.*

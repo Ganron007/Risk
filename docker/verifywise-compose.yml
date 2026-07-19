@@ -1,0 +1,29 @@
+# CADRE-Risk override for VerifyWise (AI governance sink)
+# Upstream: https://github.com/verifywise-ai/verifywise
+# Ports avoid CISO Assistant (:8080).
+
+name: cadre-risk-verifywise
+
+services:
+  postgresdb:
+    container_name: cadre-risk-vw-postgres
+  redis:
+    container_name: cadre-risk-vw-redis
+  backend:
+    container_name: cadre-risk-vw-backend
+    ports: !override
+      - "127.0.0.1:13000:3000"
+  frontend:
+    container_name: cadre-risk-vw-frontend
+    ports: !override
+      - "127.0.0.1:18080:80"
+    # Fix upstream image nginx.conf (proxy_pass localhost:3000 → 502)
+    volumes:
+      # Absolute path — compose project dir is vendor/verifywise when up.ps1 runs from there
+      - C:/STUDY/Github/CADRE-Platform/CADRE-Risk/docker/verifywise-nginx.conf:/etc/nginx/conf.d/default.conf:ro
+  worker:
+    container_name: cadre-risk-vw-worker
+  eval_server:
+    container_name: cadre-risk-vw-eval
+  ai_gateway:
+    container_name: cadre-risk-vw-gateway

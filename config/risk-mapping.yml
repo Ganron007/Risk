@@ -1,5 +1,5 @@
 # CADRE-Risk — asset → owner → classification → default controls
-# R2-S1.5 — machine-readable map for risk_engine / Eramba import later
+# R2-S1.5 — machine-readable map for risk_engine / GRC sink export
 
 version: 1
 classification_rank:

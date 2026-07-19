@@ -2,7 +2,8 @@
 
 > **SUPERSEDED for execution:** use [`../plan_v2.md`](../plan_v2.md) + [`../CHECKLIST.md`](../CHECKLIST.md).  
 > **This file (v1)** remains the reference dump for Cadre Corp fiction, full exercise ID catalog (R-EX-*), and R-IMP-* history.  
-> Do **not** start new work from the phase checkboxes below — follow plan_v2 sprints instead.
+> Do **not** start new work from the phase checkboxes below — follow plan_v2 sprints instead.  
+> **2026-07-13:** Eramba was **removed** from CADRE-Risk (did not work for the lab). Ignore Eramba mentions below; GRC sinks are **CISO Assistant** + **VerifyWise** only.
 
 > **Created:** 2026-07-12  
 > **Goal:** Build a hands-on GRC lab where CISSP risk management concepts are practiced against the real Cadre Corp DFIR infrastructure — not a pipeline, but a **simulated enterprise risk program**.  
