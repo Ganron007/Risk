@@ -8,10 +8,13 @@
   <img src="https://img.shields.io/badge/License-MIT-green.svg" alt="License: MIT">
   <img src="https://img.shields.io/badge/Python-%E2%89%A53.11-blue.svg" alt="Python: >=3.11">
   <img src="https://img.shields.io/badge/CISSP-87%20exercises-blue.svg" alt="CISSP: 87 exercises">
-  <img src="https://img.shields.io/badge/Status-Public%20Beta-blue.svg" alt="Status: Public Beta">
+  <img src="https://img.shields.io/badge/Status-Work%20in%20Progress-yellow.svg" alt="Status: Work in Progress">
 </p>
 
 Part of the [CADRE](https://github.com/Ganron007/CADRE) platform — hands-on GRC and CISSP risk practice against a real AD / SOC estate.
+
+> [!NOTE]
+> **Work in progress.** Risk is an active lab — Markdown registers are complete enough to practice, and **two live GRC tools** (CISO Assistant + VerifyWise) are wired as optional UI sinks. Expect APIs, seeds, and dashboards to keep evolving.
 
 ---
 
@@ -29,23 +32,26 @@ Part of the [CADRE](https://github.com/Ganron007/CADRE) platform — hands-on GR
 
 ---
 
-## GRC sinks (optional)
+## Active GRC tooling (optional UIs)
 
-| | Product | Focus | Lab UI |
-|---|---------|--------|--------|
-| <img src="assets/grc/ciso-assistant.svg" alt="" width="28" height="28"> | **[CISO Assistant](https://github.com/intuitem/ciso-assistant-community)** | Classic GRC — ISO 27001, SOC 2, NIST CSF, GDPR | http://localhost:8080 |
-| <img src="assets/grc/verifywise.svg" alt="" width="28" height="28"> | **[VerifyWise](https://github.com/verifywise-ai/verifywise)** | AI governance — EU AI Act, ISO 42001, model inventory | http://127.0.0.1:18080 |
+Two third-party GRC products run in Docker as **live practice sinks**. Markdown remains the source of truth — these UIs show the same Cadre Corp baseline in classic GRC and AI-governance form.
 
-| Sink | Maps to | Practice notes |
-|------|---------|----------------|
-| CISO Assistant | CADRE main lab (AD / SOC) | [`docs/ciso-notes.md`](docs/ciso-notes.md) |
-| VerifyWise | DarkAI / AI governance | [`docs/verifywise-notes.md`](docs/verifywise-notes.md) |
+| | Product | Focus | Lab UI | Practice |
+|---|---------|--------|--------|----------|
+| <img src="assets/grc/ciso-assistant.svg" alt="" width="28" height="28"> | **[CISO Assistant](https://github.com/intuitem/ciso-assistant-community)** | Classic GRC — ISO 27001, SOC 2, NIST CSF, GDPR → CADRE main lab | http://localhost:8080 | [`docs/ciso-notes.md`](docs/ciso-notes.md) |
+| <img src="assets/grc/verifywise.svg" alt="" width="28" height="28"> | **[VerifyWise](https://github.com/verifywise-ai/verifywise)** | AI governance — EU AI Act, ISO 42001, model inventory → DarkAI | http://127.0.0.1:18080 | [`docs/verifywise-notes.md`](docs/verifywise-notes.md) |
 
-<p align="center">
-  <img src="docs/img/ciso-risk-register.png" alt="Cadre Corp baseline risk register in CISO Assistant" width="48%">
-  &nbsp;
-  <img src="docs/img/verifywise-ai-risk.png" alt="Cadre Corp AI risks in VerifyWise" width="48%">
-</p>
+### CISO Assistant — classic GRC
+
+Lab: **http://localhost:8080** · Seed: `.\scripts\ciso-seed-baseline.ps1`
+
+![Cadre Corp Baseline Risk Register in CISO Assistant](docs/img/ciso-risk-register.png)
+
+### VerifyWise — AI governance
+
+Lab: **http://127.0.0.1:18080** · Seed: `.\scripts\verifywise-seed-baseline.ps1`
+
+![Cadre Corp AI risks in VerifyWise](docs/img/verifywise-ai-risk.png)
 
 Run **one stack at a time** on constrained hosts — see [`docker/README.md`](docker/README.md).
 
