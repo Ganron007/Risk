@@ -1,0 +1,38 @@
+{
+  "id": "finding-vr-002",
+  "source": "velociraptor",
+  "severity": "high",
+  "title": "Velociraptor artifact: Windows.Persistence.ScheduledTasks results",
+  "description": "Velociraptor artifact collection returned suspicious scheduled task on mbr01. Task runs every 30 minutes, executes base64-encoded PowerShell, clears event logs. Persistence mechanism consistent with campaign Phase 3 attack chain.",
+  "asset_id": "AST-004",
+  "discovered_at": "2026-06-04T18:30:00Z",
+  "evidence": "samples/findings/velociraptor-artifact-result.json",
+  "likelihood": 3,
+  "impact": 3,
+  "mitre": ["T1053.005", "T1003.001", "T1048.003", "T1070.001"],
+  "related_risk_id": "RISK-004",
+  "raw": {
+    "artifact": "Windows.Persistence.ScheduledTasks",
+    "host": "mbr01.child.cadre.local",
+    "collection_id": "C.1234567890ABCDEF",
+    "timestamp": "2026-06-04T18:30:00Z",
+    "results": [
+      {
+        "TaskName": "CadreUpdate",
+        "TaskPath": "\\CadreUpdate",
+        "Enabled": true,
+        "State": "Ready",
+        "LastRunTime": "2026-06-04T18:00:00Z",
+        "NextRunTime": "2026-06-04T18:30:00Z",
+        "Trigger": "Every 30 minutes",
+        "Action": "powershell.exe -EncodedCommand UwB0AGEAcgB0AC0AUwByAG8AdwBlAHM...",
+        "Author": "SYSTEM",
+        "Description": "System update task",
+        "Baseline": false,
+        "Suspicious": true
+      }
+    ],
+    "total_results": 1,
+    "baseline_mismatch": true
+  }
+}

@@ -40,7 +40,7 @@ Vendor clones live under `docker/vendor/` (gitignored). Overrides:
 ### CISO Assistant (classic GRC)
 
 ```powershell
-cd C:\STUDY\Github\CADRE-Platform\CADRE-Risk
+cd <repo-root>   # folder containing scripts/ and docker/
 .\scripts\ciso-up.ps1
 # http://localhost:8080 — create local superuser on first run
 # Seed Cadre Corp risks via REST (PAT from UI profile):

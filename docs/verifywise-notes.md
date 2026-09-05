@@ -31,7 +31,7 @@ CISSP angles: Domains **1** (governance), **3** (security architecture — AI sy
 | Account | Email | Password | Role |
 |---------|-------|----------|------|
 | Superadmin | `admin@cadre.local` | from `docker/verifywise.env` → `SUPERADMIN_*` | Create orgs only |
-| **Org admin (use this)** | `org-admin@cadre.local` | `***REMOVED***` (lab default from seed) | Cadre Corp data |
+| **Org admin (use this)** | `org-admin@cadre.local` | your `SUPERADMIN_PASSWORD` from `docker/verifywise.env` (seed aligns to it) | Cadre Corp data |
 
 Never commit `docker/verifywise.env` (gitignored).
 
@@ -44,14 +44,16 @@ Do this from a clean machine or after `verifywise-down.ps1 -RemoveVolumes` to re
 ### 1. Env file (once)
 
 ```powershell
-cd C:\STUDY\Github\CADRE-Platform\CADRE-Risk
+cd <repo-root>   # folder containing scripts/ and docker/
 copy docker\verifywise.env.example docker\verifywise.env
 notepad docker\verifywise.env
 # Set at least: JWT_SECRET, SUPERADMIN_EMAIL, SUPERADMIN_PASSWORD,
 # DB_PASSWORD, ENCRYPTION_KEY, AI_GATEWAY_INTERNAL_KEY
 ```
 
-Lab defaults we used: `SUPERADMIN_EMAIL=admin@cadre.local`, password aligned with CISO lab (`***REMOVED***`).
+These are **your choice** — set `SUPERADMIN_EMAIL` / `SUPERADMIN_PASSWORD` before first boot
+(the example file ships `change-me` placeholders). The seed script reads them from this env file —
+there is no hardcoded password in the repo.
 
 ### 2. Bring stack up
 
@@ -74,8 +76,9 @@ Wait until `http://127.0.0.1:13000/health` returns `"status":"ok"`.
 
 ```powershell
 .\scripts\verifywise-seed-baseline.ps1
+# Passwords: read from docker/verifywise.env SUPERADMIN_* (set your own there), else prompted.
 # Optional overrides:
-# .\scripts\verifywise-seed-baseline.ps1 -Email admin@cadre.local -Password '...'
+# .\scripts\verifywise-seed-baseline.ps1 -Email admin@cadre.local -Password '...' -OrgAdminPassword '...'
 ```
 
 Creates: org **Cadre Corp**, org-admin user, 3 use cases, 3 models, 4 AI risks.
@@ -211,7 +214,7 @@ Invoke-RestMethod http://127.0.0.1:13000/health
 # Login + list risks
 $login = Invoke-RestMethod -Method Post -Uri http://127.0.0.1:13000/api/users/login `
   -ContentType application/json `
-  -Body '{"email":"org-admin@cadre.local","password":"***REMOVED***"}'
+  -Body '{"email":"org-admin@cadre.local","password":"<your-org-admin-password>"}'
 $H = @{ Authorization = "Bearer $($login.data.token)" }
 (Invoke-RestMethod http://127.0.0.1:13000/api/projects -Headers $H).data | Format-Table id, project_title, ai_risk_classification
 (Invoke-RestMethod http://127.0.0.1:13000/api/projectRisks -Headers $H).data | Format-Table id, risk_name, likelihood, severity

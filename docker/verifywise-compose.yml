@@ -19,8 +19,9 @@ services:
       - "127.0.0.1:18080:80"
     # Fix upstream image nginx.conf (proxy_pass localhost:3000 → 502)
     volumes:
-      # Absolute path — compose project dir is vendor/verifywise when up.ps1 runs from there
-      - C:/STUDY/Github/CADRE-Platform/CADRE-Risk/docker/verifywise-nginx.conf:/etc/nginx/conf.d/default.conf:ro
+      # Path injected by scripts/verifywise-up.ps1 as $env:VW_NGINX_CONF so the repo
+      # can live anywhere; compose project dir is vendor/verifywise when up.ps1 runs.
+      - ${VW_NGINX_CONF:-./verifywise-nginx.conf}:/etc/nginx/conf.d/default.conf:ro
   worker:
     container_name: cadre-risk-vw-worker
   eval_server:

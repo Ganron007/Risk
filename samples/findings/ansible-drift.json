@@ -1,0 +1,23 @@
+{
+  "id": "finding-ansible-001",
+  "source": "ansible",
+  "severity": "medium",
+  "title": "Ansible drift detection: manual firewall rule on DC01",
+  "description": "Configuration drift detected between Ansible playbook baseline and actual DC01 state. Manual firewall rule added during troubleshooting not in IaC. Next playbook run will revert change unpredictably.",
+  "asset_id": "AST-001",
+  "discovered_at": "2026-06-15T09:20:00Z",
+  "evidence": "samples/findings/ansible-drift.json",
+  "likelihood": 2,
+  "impact": 2,
+  "mitre": ["T1078"],
+  "related_risk_id": "RISK-015",
+  "raw": {
+    "playbook": "site.yml",
+    "host": "dc01.cadre.local",
+    "drift_type": "firewall_rule",
+    "expected": "rule_id=101, action=allow, source=192.168.77.0/24, dest=any",
+    "actual": "rule_id=101, action=allow, source=192.168.77.0/24, dest=any; rule_id=999, action=allow, source=10.0.0.0/8, dest=any (MANUAL)",
+    "detected_by": "ansible-check-mode",
+    "timestamp": "2026-06-15T09:20:00Z"
+  }
+}

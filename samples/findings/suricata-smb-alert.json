@@ -1,0 +1,35 @@
+{
+  "id": "finding-suricata-001",
+  "source": "suricata",
+  "severity": "critical",
+  "title": "Suricata eve.json: SMB lateral movement to DC01",
+  "description": "Suricata detected SMB file access from mbr01 to DC01 with suspicious pattern matching lateral movement indicators from CADRE campaign Phase 3. Attacker accessed SAM database path after xp_cmdshell escalation.",
+  "asset_id": "AST-012",
+  "discovered_at": "2026-06-04T14:45:00Z",
+  "evidence": "samples/findings/suricata-smb-alert.json",
+  "likelihood": 3,
+  "impact": 3,
+  "mitre": ["T1021.002"],
+  "related_risk_id": "RISK-001",
+  "raw": {
+    "timestamp": "2026-06-04T14:45:12.789Z",
+    "event_type": "smb",
+    "src_ip": "192.168.77.20",
+    "src_port": 50123,
+    "dest_ip": "192.168.77.1",
+    "dest_port": 445,
+    "proto": "TCP",
+    "smb": {
+      "command": "NT_TRANSACT",
+      "filename": "\\Windows\\NTDS\\ntds.dit",
+      "share": "C$",
+      "status": "SUCCESS",
+      "sid": "S-1-5-21-1234567890-1234567890-1234567890-500"
+    },
+    "alert": {
+      "signature": "ET MALWARE Suspicious SMB NTDS.dit Access",
+      "category": "A Network Trojan was detected",
+      "severity": 1
+    }
+  }
+}

@@ -9,19 +9,54 @@
 
 .EXAMPLE
   .\scripts\verifywise-seed-baseline.ps1
-  .\scripts\verifywise-seed-baseline.ps1 -Email admin@cadre.local -Password '***REMOVED***'
+  .\scripts\verifywise-seed-baseline.ps1 -Email admin@cadre.local -Password '<pw>' -OrgAdminPassword '<pw>'
+
+  Passwords are YOUR choice. Omit -Password / -OrgAdminPassword and the script
+  reads SUPERADMIN_EMAIL / SUPERADMIN_PASSWORD from docker/verifywise.env
+  (set them there before first boot), then prompts interactively as a fallback.
 #>
 [CmdletBinding()]
 param(
     [string] $BaseUrl = "http://127.0.0.1:13000/api",
-    [string] $Email = "admin@cadre.local",
-    [string] $Password = "***REMOVED***",
+    [string] $Email,
+    [string] $Password,
     [string] $OrgName = "Cadre Corp",
     [string] $OrgAdminEmail = "org-admin@cadre.local",
-    [string] $OrgAdminPassword = "***REMOVED***"
+    [string] $OrgAdminPassword
 )
 
 $ErrorActionPreference = "Stop"
+
+# --- Password resolution: your choice, no hardcoded default -----------------
+# Order: -Password / -OrgAdminPassword params -> docker/verifywise.env
+# SUPERADMIN_* -> interactive prompt -> clear error.
+$EnvFile = Join-Path (Split-Path -Parent $PSScriptRoot) 'docker\verifywise.env'
+$EnvVars = @{}
+if (Test-Path $EnvFile) {
+    foreach ($line in Get-Content $EnvFile) {
+        if ($line -match '^\s*([A-Za-z0-9_]+)=(.*)$') {
+            $EnvVars[$Matches[1]] = $Matches[2].Trim('"').Trim("'")
+        }
+    }
+}
+
+if (-not $Email) {
+    $Email = if ($EnvVars['SUPERADMIN_EMAIL']) { $EnvVars['SUPERADMIN_EMAIL'] } else { 'admin@cadre.local' }
+}
+if (-not $Password) {
+    if ($EnvVars['SUPERADMIN_PASSWORD']) {
+        $Password = $EnvVars['SUPERADMIN_PASSWORD']
+        Write-Host "Superadmin password: from docker/verifywise.env SUPERADMIN_PASSWORD"
+    } elseif (-not [Console]::IsInputRedirected) {
+        $Password = Read-Host 'Superadmin password (set SUPERADMIN_PASSWORD in docker/verifywise.env, or pass -Password)'
+    } else {
+        throw 'No superadmin password available: pass -Password or set SUPERADMIN_PASSWORD in docker/verifywise.env first.'
+    }
+}
+if (-not $OrgAdminPassword) {
+    $OrgAdminPassword = $Password
+    Write-Host 'Org-admin password: same as superadmin (override with -OrgAdminPassword).'
+}
 
 function Invoke-Vw {
     param(
@@ -241,5 +276,5 @@ foreach ($rk in $risks) {
 
 Write-Host ""
 Write-Host "UI: http://127.0.0.1:18080"
-Write-Host "Login: $OrgAdminEmail / (password from script params / verifywise.env pattern)"
+Write-Host "Login: $OrgAdminEmail / password from -OrgAdminPassword param or SUPERADMIN_PASSWORD in docker/verifywise.env"
 Write-Host "Screenshot: docs/img/verifywise-ai-risk.png"

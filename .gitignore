@@ -12,4 +12,6 @@ docs/img/*.png
 !docs/img/verifywise-ai-risk.png
 cookies.txt
 schema.yaml
+build/
+dist/
 

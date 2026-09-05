@@ -91,6 +91,8 @@ CADRE tool outputs (Zeek, Suricata, Nexus, Ansible, Velociraptor, …)
 
 ## Quickstart
 
+Run from a **source checkout** — `config/` and `samples/` load relative to the repo, so `pip install` is not supported.
+
 ```powershell
 pip install pyyaml pytest requests elasticsearch
 pytest tests/ -q

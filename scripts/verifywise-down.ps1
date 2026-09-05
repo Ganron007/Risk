@@ -16,6 +16,8 @@ $VendorDir = Join-Path $DockerDir 'vendor\verifywise'
 $Override = Join-Path $DockerDir 'verifywise-compose.yml'
 $EnvFile = Join-Path $DockerDir 'verifywise.env'
 $Project = 'cadre-risk-verifywise'
+# Keep compose interpolation happy on `down` too (see docker/verifywise-compose.yml)
+$env:VW_NGINX_CONF = Join-Path $DockerDir 'verifywise-nginx.conf'
 
 if (-not (Test-Path (Join-Path $VendorDir 'docker-compose.yml'))) {
     Write-Host 'VerifyWise vendor not cloned - nothing to stop.'

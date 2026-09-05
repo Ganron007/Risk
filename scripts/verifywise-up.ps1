@@ -14,6 +14,8 @@ $EnvFile = Join-Path $DockerDir 'verifywise.env'
 $EnvExample = Join-Path $DockerDir 'verifywise.env.example'
 $Project = 'cadre-risk-verifywise'
 $Upstream = 'https://github.com/verifywise-ai/verifywise.git'
+# Portable nginx mount for docker/verifywise-compose.yml (compose interpolation)
+$env:VW_NGINX_CONF = Join-Path $DockerDir 'verifywise-nginx.conf'
 
 function Test-Command($Name) {
     return [bool](Get-Command $Name -ErrorAction SilentlyContinue)

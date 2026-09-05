@@ -1,0 +1,28 @@
+{
+  "id": "finding-nexus-001",
+  "source": "dfir-nexus",
+  "severity": "medium",
+  "title": "DFIR-Nexus audit: Velociraptor collection on mbr01",
+  "description": "DFIR-Nexus MCP tool executed Windows.Detection.ScheduledTasks artifact collection on mbr01. Audit entry cryptographically signed with HMAC-SHA256. Chain-of-custody maintained for forensic admissibility.",
+  "asset_id": "AST-032",
+  "discovered_at": "2026-06-04T18:30:00Z",
+  "evidence": "samples/findings/nexus-audit-entry.json",
+  "likelihood": 2,
+  "impact": 2,
+  "mitre": ["T1053.005"],
+  "related_risk_id": "RISK-004",
+  "raw": {
+    "audit_id": "audit-20260604-183000-abc123",
+    "tool": "velociraptor",
+    "artifact": "Windows.Detection.ScheduledTasks",
+    "target": "mbr01.child.cadre.local",
+    "operator": "analyst@cadre.local",
+    "timestamp": "2026-06-04T18:30:00Z",
+    "hash": {
+      "sha256": "a1b2c3d4e5f6789012345678901234567890123456789012345678901234567890",
+      "signature": "hmac-sha256:xyz789..."
+    },
+    "status": "DRAFT",
+    "findings_count": 1
+  }
+}

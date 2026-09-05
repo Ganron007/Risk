@@ -162,3 +162,64 @@ def score_findings(findings: list[dict[str, Any]]) -> list[ScoredRisk]:
     asset_class = load_asset_classifications()
     scored = [score_finding(f, mapping, asset_class) for f in findings]
     return sorted(scored, key=lambda s: (-s.score, s.finding_id))
+
+
+def generate_cadre_feedback(scored_risks: list[ScoredRisk]) -> dict[str, Any]:
+    """Generate CADRE lab feedback actions based on scored risks.
+    
+    This creates actionable feedback that can be sent to the CADRE lab environment
+    to trigger remediation, configuration changes, or alerts.
+    """
+    feedback_actions = []
+    
+    for risk in scored_risks:
+        if risk.score >= 9:  # Critical risks
+            if "DCSync" in risk.title or "4662" in risk.evidence:
+                feedback_actions.append({
+                    "action": "disable_account",
+                    "target": "svc_mssql",
+                    "reason": f"Critical risk {risk.finding_id}: {risk.title}",
+                    "priority": "immediate",
+                })
+            elif "scheduled task" in risk.title.lower() or "persistence" in risk.title.lower():
+                feedback_actions.append({
+                    "action": "isolate_host",
+                    "target": risk.asset_id,
+                    "reason": f"Critical risk {risk.finding_id}: {risk.title}",
+                    "priority": "immediate",
+                })
+            elif "prompt injection" in risk.title.lower() or "secret" in risk.title.lower():
+                feedback_actions.append({
+                    "action": "rotate_secret",
+                    "target": "NEXUS_AUDIT_SECRET",
+                    "reason": f"Critical risk {risk.finding_id}: {risk.title}",
+                    "priority": "immediate",
+                })
+        elif risk.score >= 6:  # High risks
+            if "firewall" in risk.title.lower() or "network" in risk.title.lower():
+                feedback_actions.append({
+                    "action": "review_firewall_rules",
+                    "target": risk.asset_id,
+                    "reason": f"High risk {risk.finding_id}: {risk.title}",
+                    "priority": "high",
+                })
+            elif "AD" in risk.title or "Kerberos" in risk.title:
+                feedback_actions.append({
+                    "action": "review_ad_configuration",
+                    "target": "domain_controllers",
+                    "reason": f"High risk {risk.finding_id}: {risk.title}",
+                    "priority": "high",
+                })
+    
+    return {
+        "generated_at": _now(),
+        "total_risks": len(scored_risks),
+        "critical_count": sum(1 for r in scored_risks if r.score >= 9),
+        "high_count": sum(1 for r in scored_risks if 6 <= r.score < 9),
+        "actions": feedback_actions,
+    }
+
+
+def _now() -> str:
+    from datetime import datetime, timezone
+    return datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")

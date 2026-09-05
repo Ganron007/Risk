@@ -1,0 +1,29 @@
+{
+  "id": "finding-zeek-001",
+  "source": "zeek",
+  "severity": "high",
+  "title": "Zeek kerberos.log: RC4 encryption in TGS request (Kerberoast pattern)",
+  "description": "Zeek kerberos.log captured TGS request with encryption type 0x17 (RC4-HMAC) - classic Kerberoast indicator from CADRE campaign Phase 2. Subject requesting service ticket for SPN with RC4 suggests offline cracking attempt.",
+  "asset_id": "AST-012",
+  "discovered_at": "2026-06-04T10:15:00Z",
+  "evidence": "samples/findings/zeek-kerberos.json",
+  "likelihood": 3,
+  "impact": 2,
+  "mitre": ["T1558.003"],
+  "related_risk_id": "RISK-002",
+  "raw": {
+    "ts": "2026-06-04T10:15:23.456Z",
+    "uid": "C5k3j4m1",
+    "id.orig_h": "192.168.77.20",
+    "id.orig_p": 54321,
+    "id.resp_h": "192.168.77.1",
+    "id.resp_p": 88,
+    "service": "krb5",
+    "request_type": "TGS-REQ",
+    "client": "svc_mssql@CHILD.CADRE.LOCAL",
+    "server": "MSSQLSvc/mbr01.child.cadre.local:1433",
+    "cipher": "rc4-hmac",
+    "forwardable": true,
+    "renewable": false
+  }
+}
