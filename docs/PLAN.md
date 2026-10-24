@@ -198,7 +198,7 @@ Each exercise uses a real finding from the CADRE ecosystem and requires a hands-
 ```
 CADRE-DarkAI audit JSONL ──┐
 Praxis SARIF ──────────────┤
-Elastic detection alerts ──┼──► ingest.py ──► risk_engine.py ──► eramba_client.py ──► Eramba GRC
+Elastic detection alerts ──┼──► ingest.py ──► risk_engine.py ──► cross_platform.py ──► CISO Assistant / VerifyWise GRC
 Velociraptor artifacts ────┤                       │
 RevAI malware reports ─────┘                       ▼
                                             board_report.py ──► Markdown board memo
@@ -210,7 +210,7 @@ RevAI malware reports ─────┘                       ▼
 |-----------|---------|-------------|
 | `src/ingest.py` | Read findings from CADRE projects (normalizes JSONL/SARIF/artifacts) | 7 |
 | `src/risk_engine.py` | Score risks (qualitative matrix + ALE), map to assets/controls | 1 |
-| `src/eramba_client.py` | Push risks/controls/assets to Eramba via REST API | 1, 7 |
+| `src/cross_platform.py` | Push risks/findings to CISO Assistant + VerifyWise via REST API | 1, 7 |
 | `src/board_report.py` | Generate Markdown board memo from top-N risks | 1 |
 | `config/risk-mapping.yml` | Asset → owner → classification → control mappings | 1, 2 |
 | `samples/` | Example findings from each CADRE source | all |
@@ -265,7 +265,7 @@ RevAI malware reports ─────┘                       ▼
 ### Phase 2 — Tooling pipeline (Layer 3)
 - [ ] R-IMP-010: Build `src/ingest.py` — read DarkAI JSONL + Praxis SARIF + example artifacts
 - [ ] R-IMP-011: Build `src/risk_engine.py` — score findings using the matrix + ALE
-- [ ] R-IMP-012: Build `src/eramba_client.py` — push risks/assets/controls to Eramba API
+- [ ] R-IMP-012: Build `src/cross_platform.py` — push risks/findings to CISO Assistant + VerifyWise API
 - [ ] R-IMP-013: Build `src/board_report.py` — generate Markdown board memo
 - [ ] R-IMP-014: Create `tests/test_risk_engine.py` — verify scoring logic
 

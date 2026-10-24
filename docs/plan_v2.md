@@ -232,7 +232,7 @@ You are already testing CADRE projects daily. Treat Risk as a **fixed daily bloc
 ## 7. Target layout (after Sprint 1 + Sprint 2 Docker)
 
 ```text
-CADRE-Risk/
+Risk/
 ├── README.md
 ├── plan_v2.md              ← THIS FILE (execution SSoT)
 ├── CHECKLIST.md            ← flip statuses here first

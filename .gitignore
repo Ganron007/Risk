@@ -10,8 +10,6 @@ docs/img/*.png
 !docs/img/.gitkeep
 !docs/img/ciso-risk-register.png
 !docs/img/verifywise-ai-risk.png
-cookies.txt
-schema.yaml
 build/
 dist/
 

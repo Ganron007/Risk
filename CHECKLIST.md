@@ -49,7 +49,7 @@
 | R2-S5.1 | Implement DarkAI JSONL → VerifyWise AI risk adapter | [x] | Medium | `darkai_jsonl_to_verifywise_risk()` in src/adapters.py |
 | R2-S5.2 | Implement RevAI verdict → VerifyWise AI use-case adapter | [x] | Medium | `revai_verdict_to_verifywise_usecase()` in src/adapters.py |
 | R2-S5.3 | Implement Praxis SARIF → CISO Assistant finding adapter | [x] | Medium | `sarif_to_ciso_finding()` in src/adapters.py |
-| R2-S5.4 | Add adapter configuration flag (frozen vs live mode) | [x] | Low | ADAPTER_MODE env var added to src/adapters.py |
+| R2-S5.4 | Add adapter configuration flag (frozen vs live mode) | [~] | Low | ADAPTER_MODE removed (dead code, F15); adapters are pure functions; live push via cross_platform.py |
 
 ## Sprint 6 — Feedback loop and integration (2026-07-27)
 
@@ -67,8 +67,8 @@
 | ID | Item | Status | Priority | Notes |
 |----|------|--------|----------|-------|
 | R2-S7.1 | Implement actual Elasticsearch Python client for live SIEM integration | [x] | High | Elasticsearch client in src/board_report.py with auth support |
-| R2-S7.2 | Implement CISO Assistant REST API client for live risk push (CADRE main lab) | [x] | Medium | `fetch_ciso_risks()` + `push_risk_to_ciso()` in src/cross_platform.py |
-| R2-S7.3 | Implement VerifyWise REST API client for live AI risk push (DarkAI project) | [x] | Medium | `fetch_verifywise_risks()` + `push_risk_to_verifywise()` in src/cross_platform.py |
+| R2-S7.2 | Implement CISO Assistant REST API client for live risk push (CADRE main lab) | [~] | Medium | `fetch_ciso_risks()` + `push_risk_to_ciso()` in src/cross_platform.py (frozen verified; live push pending running stack) |
+| R2-S7.3 | Implement VerifyWise REST API client for live AI risk push (DarkAI project) | [~] | Medium | `fetch_verifywise_risks()` + `push_risk_to_verifywise()` in src/cross_platform.py (frozen verified; live push pending running stack) |
 | R2-S7.4 | Integrate feedback JSON with Ansible playbooks on AST-013 for automated remediation | [x] | High | src/ansible_integration.py - feedback → tasks → playbook → execution |
 | R2-S7.5 | Add approval workflow for critical remediation actions | [x] | Medium | src/approval_workflow.py - human-in-the-loop for critical actions |
 | R2-S7.6 | Implement rollback capabilities for automated remediation | [x] | Low | `generate_rollback_playbook()` in src/ansible_integration.py |
@@ -77,7 +77,7 @@
 
 | Suite | Status |
 |-------|--------|
-| `pytest tests/` | **8 passed** (2026-07-13) |
+| `pytest tests/` | **19 passed** (2026-10-24) |
 
 ---
 
@@ -88,4 +88,4 @@
 
 ---
 
-*Last updated: 2026-07-27 — Sprint 4–7 complete; full live integration deployed*
+*Last updated: 2026-10-24 - Batch A hardening (F3-F15) committed; B truth pass in progress*

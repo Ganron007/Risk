@@ -160,7 +160,7 @@ Invoke-RestMethod -Method Post -Uri "$Base/risk-scenarios/" -Headers $H -Body $b
 
 ## Future (optional)
 
-- `src/ciso_client.py` — push scored findings from `risk_engine` (not required for Sprint 2)
+- `src/cross_platform.py` - push scored findings from `risk_engine` (live client; frozen-mode default)
 - Full 18-row register sync on schedule
 - VerifyWise remains the AI-governance sink (`docs/verifywise-notes.md`)
 
