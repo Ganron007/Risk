@@ -91,10 +91,10 @@ CADRE tool outputs (Zeek, Suricata, Nexus, Ansible, Velociraptor, …)
 
 ## Quickstart
 
-Run from a **source checkout** — `config/` and `samples/` load relative to the repo, so `pip install` is not supported.
+Run from a **source checkout** (or an editable install) - `config/` and `samples/` load relative to the repo.
 
 ```powershell
-pip install pyyaml pytest requests elasticsearch
+pip install -e ".[dev,live]"
 pytest tests/ -q
 
 # Board memo — no Docker required
