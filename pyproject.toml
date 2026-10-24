@@ -15,5 +15,8 @@ dependencies = [
 dev = ["pytest>=8.0"]
 live = ["requests>=2.31", "elasticsearch>=8"]
 
+[tool.setuptools]
+packages = ["src"]
+
 [tool.pytest.ini_options]
 testpaths = ["tests"]
