@@ -291,8 +291,10 @@ def generate_rollback_playbook(
         original = yaml.safe_load(f)
     
     rollback_tasks = []
-    
+    rollback_hosts = "provisioning"
+
     for play in original:
+        rollback_hosts = play.get("hosts", rollback_hosts)
         for task in play.get("tasks", []):
             module = None
             for key in task.keys():
@@ -321,10 +323,24 @@ def generate_rollback_playbook(
                     },
                     "become": task.get("become", False),
                 })
+
+            elif module == "ansible.windows.win_command":
+                # No safe automatic inverse for ad-hoc review scripts — flag
+                # for a human instead of inventing an undo contract.
+                rollback_tasks.append({
+                    "name": f"MANUAL ROLLBACK REQUIRED — no automatic inverse for: {task['name']}",
+                    "ansible.builtin.debug": {
+                        "msg": (
+                            f"Task '{task['name']}' runs an ad-hoc command "
+                            f"({task[module].get('cmd', 'n/a')}); verify results and roll back manually."
+                        ),
+                    },
+                    "become": task.get("become", False),
+                })
     
     rollback_playbook = {
         "name": f"rollback-{original_playbook.stem}",
-        "hosts": play.get("hosts", "provisioning"),
+        "hosts": rollback_hosts,
         "gather_facts": False,
         "tasks": rollback_tasks,
     }

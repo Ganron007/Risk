@@ -127,7 +127,12 @@ def convert_siem_alert_to_finding(alert: dict[str, Any]) -> dict[str, Any]:
     }
 
 
-def render_memo(scored, title: str | None = None) -> str:
+def render_memo(
+    scored,
+    title: str | None = None,
+    *,
+    data_source: str = "frozen sample findings",
+) -> str:
     today = date.today().isoformat()
     title = title or f"Cadre Corp — Quarterly Risk Memo ({today})"
     lines = [
@@ -139,14 +144,14 @@ def render_memo(scored, title: str | None = None) -> str:
         "",
         "## Executive summary",
         "",
-        "This memo scores **frozen sample findings** from CADRE labs "
+        f"This memo scores **{data_source}** from CADRE labs "
         "(DarkAI, Praxis, RevAI, Elastic, Velociraptor) using likelihood × impact. "
         "ALE bands are **illustrative** for CISSP Domain 1 practice — not audited financials.",
         "",
         f"**Findings scored:** {len(scored)}  ",
         f"**Critical/High (score ≥ 6):** {sum(1 for s in scored if s.score >= 6)}  ",
         "",
-        "## Top risks (from samples)",
+        "## Top risks",
         "",
         "| Rank | Score | Band | Finding | Asset | Treatment |",
         "|------|-------|------|---------|-------|-----------|",
@@ -280,10 +285,11 @@ def main(argv: list[str] | None = None) -> int:
         raise SystemExit(f"No findings found (tried live SIEM and {args.samples})")
     
     scored = score_findings(findings)
-    text = render_memo(scored)
+    live_mode = args.live or SIEM_MODE == "live"
+    text = render_memo(scored, data_source="live SIEM alerts" if live_mode else "frozen sample findings")
     args.out.parent.mkdir(parents=True, exist_ok=True)
     args.out.write_text(text, encoding="utf-8")
-    print(f"Wrote {args.out} ({len(scored)} findings, mode={'live' if (args.live or SIEM_MODE == 'live') else 'frozen'})")
+    print(f"Wrote {args.out} ({len(scored)} findings, mode={'live' if live_mode else 'frozen'})")
     return 0
 
 

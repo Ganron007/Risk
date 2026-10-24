@@ -80,8 +80,23 @@ def _treatment_from_score(score: int) -> str:
     return "Accept/monitor"
 
 
+def _coerce_score(value: Any, default: int = 2) -> int:
+    """Coerce a risk-probability/impact value from an API body into a 1-3 int.
+
+    VerifyWise/CISO Assistant live APIs can return word scales or non-numeric
+    junk; anything int()-able is clamped to 1-3, everything else falls back to
+    the default instead of crashing on arithmetic.
+    """
+    if value is None:
+        return default
+    try:
+        return max(1, min(3, int(value)))
+    except (TypeError, ValueError):
+        return default
+
+
 def fetch_ciso_risks(
-    api_url: str = "http://127.0.0.1:8000",
+    api_url: str = "http://127.0.0.1:8080",
     *,
     api_key: str | None = None,
 ) -> list[dict[str, Any]]:
@@ -129,7 +144,7 @@ def fetch_ciso_risks(
     
     try:
         response = requests.get(
-            f"{api_url}/api/risks/",
+            f"{api_url}/api/risk-scenarios/",
             headers=headers,
             timeout=30,
         )
@@ -155,7 +170,7 @@ def fetch_ciso_risks(
 
 def push_risk_to_ciso(
     risk: dict[str, Any],
-    api_url: str = "http://127.0.0.1:8000",
+    api_url: str = "http://127.0.0.1:8080",
     *,
     api_key: str | None = None,
 ) -> dict[str, Any] | None:
@@ -177,7 +192,7 @@ def push_risk_to_ciso(
     
     try:
         response = requests.post(
-            f"{api_url}/api/risks/",
+            f"{api_url}/api/risk-scenarios/",
             headers=headers,
             json=risk,
             timeout=30,
@@ -327,8 +342,8 @@ def push_risk_to_verifywise(
 
 def normalize_ciso_risk(risk: dict[str, Any]) -> UnifiedRisk:
     """Normalize CISO Assistant risk to unified format."""
-    likelihood = risk.get("likelihood", 2)
-    impact = risk.get("impact", 2)
+    likelihood = _coerce_score(risk.get("likelihood"))
+    impact = _coerce_score(risk.get("impact"))
     score = likelihood * impact
     
     return UnifiedRisk(
@@ -352,8 +367,8 @@ def normalize_ciso_risk(risk: dict[str, Any]) -> UnifiedRisk:
 
 def normalize_verifywise_risk(risk: dict[str, Any]) -> UnifiedRisk:
     """Normalize VerifyWise risk to unified format."""
-    likelihood = risk.get("likelihood", 2)
-    impact = risk.get("impact", 2)
+    likelihood = _coerce_score(risk.get("likelihood"))
+    impact = _coerce_score(risk.get("impact"))
     score = likelihood * impact
     
     return UnifiedRisk(
@@ -376,7 +391,7 @@ def normalize_verifywise_risk(risk: dict[str, Any]) -> UnifiedRisk:
 
 
 def generate_unified_dashboard(
-    ciso_url: str = "http://127.0.0.1:8000",
+    ciso_url: str = "http://127.0.0.1:8080",
     vw_url: str = "http://127.0.0.1:13000",
 ) -> dict[str, Any]:
     """Generate unified dashboard data from both platforms."""
@@ -549,7 +564,7 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument(
         "--ciso-url",
         type=str,
-        default="http://127.0.0.1:8000",
+        default="http://127.0.0.1:8080",
         help="CISO Assistant API URL",
     )
     parser.add_argument(

@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+import json
+import re
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
@@ -203,7 +205,7 @@ def generate_cadre_feedback(scored_risks: list[ScoredRisk]) -> dict[str, Any]:
                     "reason": f"High risk {risk.finding_id}: {risk.title}",
                     "priority": "high",
                 })
-            elif "AD" in risk.title or "Kerberos" in risk.title:
+            elif "kerberos" in risk.title.lower() or re.search(r"\bad\b", risk.title, re.IGNORECASE):
                 feedback_actions.append({
                     "action": "review_ad_configuration",
                     "target": "domain_controllers",
@@ -220,6 +222,49 @@ def generate_cadre_feedback(scored_risks: list[ScoredRisk]) -> dict[str, Any]:
     }
 
 
+def main(argv: list[str] | None = None) -> int:
+    """CLI: score sample findings and write the CADRE feedback JSON.
+
+    This bridges the loop: score_findings → generate_cadre_feedback → file,
+    which feeds src.approval_workflow / src.ansible_integration (--feedback).
+    """
+    import argparse
+
+    from .ingest import load_findings_dir
+
+    parser = argparse.ArgumentParser(description="CADRE-Risk feedback generator")
+    parser.add_argument(
+        "--samples",
+        type=Path,
+        default=REPO_ROOT / "samples" / "findings",
+        help="Directory of unified finding JSON files",
+    )
+    parser.add_argument(
+        "--out",
+        type=Path,
+        default=REPO_ROOT / "artifacts" / "feedback.json",
+        help="Output feedback JSON path",
+    )
+    args = parser.parse_args(argv)
+
+    findings = load_findings_dir(args.samples)
+    if not findings:
+        raise SystemExit(f"No findings found in {args.samples}")
+    scored = score_findings(findings)
+    feedback = generate_cadre_feedback(scored)
+    args.out.parent.mkdir(parents=True, exist_ok=True)
+    with open(args.out, "w", encoding="utf-8") as f:
+        json.dump(feedback, f, indent=2)
+        f.write("\n")
+    print(f"Wrote {args.out} ({feedback['total_risks']} risks, {len(feedback['actions'])} actions)")
+    return 0
+
+
 def _now() -> str:
     from datetime import datetime, timezone
     return datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
+
+
+if __name__ == "__main__":
+    import sys
+    sys.exit(main())

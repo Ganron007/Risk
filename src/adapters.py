@@ -3,16 +3,9 @@
 from __future__ import annotations
 
 import json
-import os
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
-
-
-# Adapter configuration flag
-# Set environment variable ADAPTER_MODE=frozen to use static sample data only
-# Set ADAPTER_MODE=live (default) to process actual tool outputs
-ADAPTER_MODE = os.getenv("ADAPTER_MODE", "live")
 
 
 def _now() -> str:

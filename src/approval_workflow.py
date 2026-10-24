@@ -6,6 +6,7 @@ import getpass
 import hashlib
 import json
 import os
+import sys
 from dataclasses import dataclass
 from datetime import datetime, timezone
 from pathlib import Path
@@ -84,6 +85,15 @@ def request_approval(request: ApprovalRequest) -> bool:
         request.approved_at = datetime.now(timezone.utc).isoformat()
         return True
     
+    # Non-interactive guard: a human gate cannot be satisfied without a human.
+    # Critical actions are NEVER auto-approved here — they are deferred for
+    # manual review so callers (CI, agents) fail closed.
+    if not sys.stdin or not sys.stdin.isatty():
+        request.status = "deferred"
+        request.rejection_reason = "non-interactive session — deferred for manual approval"
+        print(f"[DEFERRED] Action {request.id}: non-interactive session - requires manual approval")
+        return False
+
     print(f"\n{'='*60}")
     print(f"APPROVAL REQUIRED: {request.id}")
     print(f"{'='*60}")
@@ -95,7 +105,14 @@ def request_approval(request: ApprovalRequest) -> bool:
     print(f"{'='*60}")
     
     while True:
-        response = input("Approve this action? (yes/no): ").strip().lower()
+        try:
+            response = input("Approve this action? (yes/no): ").strip().lower()
+        except (EOFError, KeyboardInterrupt):
+            # Fail closed: no interactive answer available, never auto-approve.
+            request.status = "deferred"
+            request.rejection_reason = "no interactive answer available — deferred for manual approval"
+            print(f"[DEFERRED] Action {request.id}: no interactive answer available - requires manual approval")
+            return False
         if response in ["yes", "y"]:
             request.status = "approved"
             request.approved_by = getpass.getuser()
@@ -104,7 +121,10 @@ def request_approval(request: ApprovalRequest) -> bool:
             return True
         elif response in ["no", "n"]:
             request.status = "rejected"
-            request.rejection_reason = input("Rejection reason (optional): ").strip() or "User rejected"
+            try:
+                request.rejection_reason = input("Rejection reason (optional): ").strip() or "User rejected"
+            except (EOFError, KeyboardInterrupt):
+                request.rejection_reason = "User rejected (no reason available)"
             print(f"✗ Action {request.id} rejected: {request.rejection_reason}")
             return False
         else:
