@@ -150,13 +150,11 @@ usecase = revai_verdict_to_verifywise_usecase(
 
 ### Configuration Mode
 
-Set `ADAPTER_MODE` environment variable:
-
-- `ADAPTER_MODE=frozen` - Use static sample data only (default)
-- `ADAPTER_MODE=live` - Process actual tool outputs from live CADRE environment
+Adapters are pure functions (no mode flag). Board-report data source is
+controlled by `--live` / `SIEM_MODE`:
 
 ```bash
-export ADAPTER_MODE=live
+export SIEM_MODE=live
 python -m src.board_report --live
 ```
 
@@ -368,7 +366,6 @@ vw_risk = darkai_jsonl_to_verifywise_risk(Path("samples/findings/darkai-audit-sa
 
 | Variable | Values | Purpose |
 |----------|--------|---------|
-| `ADAPTER_MODE` | `frozen` (default), `live` | Adapter data source |
 | `SIEM_MODE` | `frozen` (default), `live` | Board report data source |
 
 ### Configuration Files

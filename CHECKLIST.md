@@ -88,4 +88,4 @@
 
 ---
 
-*Last updated: 2026-10-24 - Batch A hardening (F3-F15) committed; B truth pass in progress*
+*Last updated: 2026-10-24 - Batches A-D complete; v0.1.0 released*
