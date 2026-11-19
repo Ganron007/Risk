@@ -12,7 +12,7 @@ $VendorDir = Join-Path $DockerDir 'vendor\verifywise'
 $Override = Join-Path $DockerDir 'verifywise-compose.yml'
 $EnvFile = Join-Path $DockerDir 'verifywise.env'
 $EnvExample = Join-Path $DockerDir 'verifywise.env.example'
-$Project = 'cadre-risk-verifywise'
+$Project = 'Risk'
 $Upstream = 'https://github.com/verifywise-ai/verifywise.git'
 # Portable nginx mount for docker/verifywise-compose.yml (compose interpolation)
 $env:VW_NGINX_CONF = Join-Path $DockerDir 'verifywise-nginx.conf'

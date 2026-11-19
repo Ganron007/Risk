@@ -2,7 +2,7 @@
 # Upstream: https://github.com/verifywise-ai/verifywise
 # Ports avoid CISO Assistant (:8080).
 
-name: cadre-risk-verifywise
+name: Risk
 
 services:
   postgresdb:

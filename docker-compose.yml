@@ -1,0 +1,30 @@
+name: Risk
+
+services:
+  risk:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: cadre-risk:latest
+    container_name: Risk
+    ports:
+      - "8895:8895"
+    environment:
+      - PORT=8895
+      - HOST=0.0.0.0
+      - CISO_MODE=frozen
+      - VW_MODE=frozen
+      - SIEM_MODE=frozen
+      - APPROVAL_MODE=manual
+      - ANSIBLE_MODE=dry-run
+    volumes:
+      - ./artifacts:/app/artifacts
+      - ./samples:/app/samples:ro
+      - ./config:/app/config:ro
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8895/health')"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+    restart: unless-stopped

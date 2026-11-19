@@ -14,7 +14,7 @@ $RepoRoot = Split-Path -Parent $PSScriptRoot
 $DockerDir = Join-Path $RepoRoot 'docker'
 $VendorDir = Join-Path $DockerDir 'vendor\ciso-assistant'
 $Override = Join-Path $DockerDir 'ciso-compose.yml'
-$Project = 'cadre-risk-ciso'
+$Project = 'Risk'
 
 if (-not (Test-Path (Join-Path $VendorDir 'docker-compose.yml'))) {
     Write-Host 'CISO vendor not cloned - nothing to stop.'

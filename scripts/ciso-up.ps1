@@ -10,7 +10,7 @@ $RepoRoot = Split-Path -Parent $PSScriptRoot
 $DockerDir = Join-Path $RepoRoot 'docker'
 $VendorDir = Join-Path $DockerDir 'vendor\ciso-assistant'
 $Override = Join-Path $DockerDir 'ciso-compose.yml'
-$Project = 'cadre-risk-ciso'
+$Project = 'Risk'
 $Upstream = 'https://github.com/intuitem/ciso-assistant-community.git'
 
 function Test-Command($Name) {

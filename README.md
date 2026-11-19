@@ -97,6 +97,10 @@ Run from a **source checkout** (or an editable install) - `config/` and `samples
 pip install -e ".[dev,live]"
 pytest tests/ -q
 
+# Run in Docker (single "Risk" container):
+docker compose up -d
+# http://localhost:8895 — live unified dashboard
+
 # Board memo — no Docker required
 python -m src.board_report --samples samples/findings --out artifacts/board-memo.md
 

@@ -3,30 +3,30 @@
 # hits SSL_ERROR_INTERNAL_ERROR_ALERT with Caddy tls internal on Windows.
 # Upstream: https://github.com/intuitem/ciso-assistant-community
 
-name: cadre-risk-ciso
+name: Risk
 
 services:
   backend:
-    container_name: cadre-risk-ciso-backend
+    container_name: Risk-backend
     environment:
       - ALLOWED_HOSTS=backend,localhost,127.0.0.1
       - CISO_ASSISTANT_URL=http://localhost:8080
   huey:
-    container_name: cadre-risk-ciso-huey
+    container_name: Risk-huey
     environment:
       - ALLOWED_HOSTS=backend,localhost,127.0.0.1
       - CISO_ASSISTANT_URL=http://localhost:8080
   frontend:
-    container_name: cadre-risk-ciso-frontend
+    container_name: Risk-frontend
     environment:
       - PUBLIC_BACKEND_API_URL=http://backend:8000/api
       - PUBLIC_BACKEND_API_EXPOSED_URL=http://localhost:8080/api
   qdrant:
-    container_name: cadre-risk-ciso-qdrant
+    container_name: Risk-qdrant
     ports: !override
       - "127.0.0.1:6333:6333"
   caddy:
-    container_name: cadre-risk-ciso-caddy
+    container_name: Risk-caddy
     environment:
       - CISO_ASSISTANT_URL=http://localhost:8080
     ports: !override
