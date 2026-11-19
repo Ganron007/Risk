@@ -150,7 +150,13 @@ def fetch_ciso_risks(
         )
         response.raise_for_status()
         
-        risks = response.json()
+        data = response.json()
+        if isinstance(data, dict):
+            risks = data.get("results", [data] if "id" in data or "name" in data or "ref_id" in data else [])
+        elif isinstance(data, list):
+            risks = data
+        else:
+            risks = []
         print(f"Fetched {len(risks)} risks from CISO Assistant at {api_url}")
         return risks
         
@@ -273,7 +279,12 @@ def fetch_verifywise_risks(
         response.raise_for_status()
         
         data = response.json()
-        risks = data.get("data", [])
+        if isinstance(data, dict):
+            risks = data.get("data", [data] if "id" in data or "risk_name" in data else [])
+        elif isinstance(data, list):
+            risks = data
+        else:
+            risks = []
         print(f"Fetched {len(risks)} AI risks from VerifyWise at {api_url}")
         return risks
         
@@ -342,14 +353,16 @@ def push_risk_to_verifywise(
 
 def normalize_ciso_risk(risk: dict[str, Any]) -> UnifiedRisk:
     """Normalize CISO Assistant risk to unified format."""
-    likelihood = _coerce_score(risk.get("likelihood"))
-    impact = _coerce_score(risk.get("impact"))
+    likelihood = _coerce_score(risk.get("likelihood") if "likelihood" in risk else risk.get("current_proba"))
+    impact = _coerce_score(risk.get("impact") if "impact" in risk else risk.get("current_impact"))
     score = likelihood * impact
+    risk_id = str(risk.get("id") or risk.get("ref_id") or "unknown")
+    title = risk.get("title") or risk.get("name") or ""
     
     return UnifiedRisk(
-        id=risk.get("id", "unknown"),
+        id=risk_id,
         source="ciso",
-        title=risk.get("title", ""),
+        title=title,
         description=risk.get("description", ""),
         severity=risk.get("severity", "medium"),
         likelihood=likelihood,
@@ -370,20 +383,25 @@ def normalize_verifywise_risk(risk: dict[str, Any]) -> UnifiedRisk:
     likelihood = _coerce_score(risk.get("likelihood"))
     impact = _coerce_score(risk.get("impact"))
     score = likelihood * impact
+    risk_id = str(risk.get("id") or risk.get("risk_id") or "unknown")
+    title = risk.get("title") or risk.get("risk_name") or ""
+    framework = risk.get("framework") or risk.get("frameworks") or []
+    if isinstance(framework, str):
+        framework = [framework]
     
     return UnifiedRisk(
-        id=risk.get("id", "unknown"),
+        id=risk_id,
         source="verifywise",
-        title=risk.get("title", ""),
-        description=risk.get("description", ""),
-        severity=risk.get("severity", "medium"),
+        title=title,
+        description=risk.get("description") or risk.get("risk_description") or "",
+        severity=risk.get("severity") or risk.get("risk_severity") or "medium",
         likelihood=likelihood,
         impact=impact,
         score=score,
         band=_score_band(score),
         treatment=_treatment_from_score(score),
         category="ai_governance",
-        framework=risk.get("framework", []),
+        framework=framework,
         created_at=risk.get("created_at", _now()),
         updated_at=risk.get("updated_at", _now()),
         raw=risk,

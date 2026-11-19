@@ -63,7 +63,6 @@ def sarif_to_ciso_finding(
     impact: int = 2,
 ) -> dict[str, Any]:
     """Convert Praxis SARIF to CISO Assistant finding format for classic GRC."""
-    data = json.loads(sarif_path.read_text(encoding="utf-8"))
     findings = sarif_to_findings(sarif_path, asset_id=asset_id)
     
     if not findings:
@@ -144,7 +143,7 @@ def revai_verdict_to_verifywise_usecase(
     
     # Map verdict to EU AI Act classification
     ai_risk_classification = "High risk" if verdict == "malicious" else "Limited risk"
-    type_of_high_risk_role = "Provider" if verdict == "malicious" else "Provider"
+    type_of_high_risk_role = "Provider" if verdict == "malicious" else "Deployer"
     
     return {
         "project_title": f"RevAI malware analysis: {family}",

@@ -77,7 +77,7 @@
 
 | Suite | Status |
 |-------|--------|
-| `pytest tests/` | **19 passed** (2026-10-24) |
+| `pytest tests/` | **24 passed** (2026-11-19) |
 
 ---
 

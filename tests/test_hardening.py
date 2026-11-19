@@ -155,3 +155,93 @@ def test_rollback_empty_playbook_no_crash(tmp_path):
     rolled = yaml.safe_load(rollback_path.read_text(encoding="utf-8"))[0]
     assert rolled["hosts"] == "provisioning"
     assert rolled["tasks"] == []
+
+
+# --- P0: CISO/VW normalization and pagination fixes -------------------------
+
+def test_normalize_ciso_with_proba_impact_fields():
+    raw = {
+        "ref_id": "PER-001",
+        "name": "ADCS ESC1 abuse",
+        "current_proba": 3,
+        "current_impact": 3,
+        "description": "Certificate enrollment abuse",
+    }
+    risk = normalize_ciso_risk(raw)
+    assert risk.id == "PER-001"
+    assert risk.title == "ADCS ESC1 abuse"
+    assert risk.score == 9
+    assert risk.band == "Critical"
+    assert risk.treatment == "Remediate immediately"
+
+
+def test_normalize_verifywise_with_risk_name_and_frameworks():
+    raw = {
+        "risk_id": "VW-005",
+        "risk_name": "Model Extraction Attack",
+        "risk_description": "API scraping extracts model weights",
+        "likelihood": 2,
+        "impact": 3,
+        "frameworks": ["ISO 42001", "EU AI Act"],
+    }
+    risk = normalize_verifywise_risk(raw)
+    assert risk.id == "VW-005"
+    assert risk.title == "Model Extraction Attack"
+    assert risk.score == 6
+    assert risk.band == "High"
+    assert "ISO 42001" in risk.framework
+
+
+def test_fetch_ciso_risks_pagination_support(monkeypatch):
+    import requests
+    from unittest.mock import MagicMock
+    from src import cross_platform
+
+    mock_resp = MagicMock()
+    mock_resp.json.return_value = {
+        "count": 1,
+        "results": [
+            {"ref_id": "RISK-001", "name": "DCSync", "current_proba": 3, "current_impact": 3}
+        ],
+    }
+    mock_resp.raise_for_status = MagicMock()
+
+    monkeypatch.setattr(cross_platform, "CISO_MODE", "live")
+    monkeypatch.setattr(requests, "get", lambda *args, **kwargs: mock_resp)
+
+    risks = cross_platform.fetch_ciso_risks("http://127.0.0.1:8080")
+    assert len(risks) == 1
+    assert risks[0]["ref_id"] == "RISK-001"
+
+
+def test_revai_verdict_to_verifywise_usecase_role(tmp_path):
+    from src.adapters import revai_verdict_to_verifywise_usecase
+
+    malicious_json = tmp_path / "mal.json"
+    malicious_json.write_text(json.dumps({"verdict": "malicious", "family": "lumma", "score": 95}), encoding="utf-8")
+    clean_json = tmp_path / "clean.json"
+    clean_json.write_text(json.dumps({"verdict": "benign", "family": "calc", "score": 10}), encoding="utf-8")
+
+    mal_usecase = revai_verdict_to_verifywise_usecase(malicious_json)
+    assert mal_usecase["type_of_high_risk_role"] == "Provider"
+    assert mal_usecase["ai_risk_classification"] == "High risk"
+
+    clean_usecase = revai_verdict_to_verifywise_usecase(clean_json)
+    assert clean_usecase["type_of_high_risk_role"] == "Deployer"
+    assert clean_usecase["ai_risk_classification"] == "Limited risk"
+
+
+def test_ansible_tasks_condition_string():
+    from src.ansible_integration import feedback_to_ansible_tasks
+
+    feedback = {
+        "actions": [
+            {"action": "disable_account", "target": "svc_test", "priority": "immediate"},
+            {"action": "review_firewall_rules", "target": "AST-002", "priority": "high"},
+        ]
+    }
+    tasks = feedback_to_ansible_tasks(feedback)
+    assert len(tasks) == 2
+    assert tasks[0].when == 'remediation_priority == "immediate"'
+    assert tasks[1].when == 'remediation_priority == "high"'
+    assert isinstance(tasks[0].when, str)

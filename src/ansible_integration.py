@@ -24,7 +24,7 @@ class AnsibleTask:
     module: str
     args: dict[str, Any]
     become: bool = False
-    when: str | None = None
+    when: str | bool | None = None
 
 
 def feedback_to_ansible_tasks(feedback: dict[str, Any]) -> list[AnsibleTask]:
@@ -39,6 +39,7 @@ def feedback_to_ansible_tasks(feedback: dict[str, Any]) -> list[AnsibleTask]:
         target = action.get("target")
         reason = action.get("reason", "")
         priority = action.get("priority", "medium")
+        condition = f'remediation_priority == "{priority}"'
         
         if action_type == "disable_account":
             # Use win_domain_user module to disable AD account
@@ -51,7 +52,7 @@ def feedback_to_ansible_tasks(feedback: dict[str, Any]) -> list[AnsibleTask]:
                     "domain_ou": "OU=Users,DC=cadre,DC=local",
                 },
                 become=True,
-                when=priority == "immediate",
+                when=condition,
             ))
             
         elif action_type == "isolate_host":
@@ -67,7 +68,7 @@ def feedback_to_ansible_tasks(feedback: dict[str, Any]) -> list[AnsibleTask]:
                     "profile": ["domain", "private", "public"],
                 },
                 become=True,
-                when=priority == "immediate",
+                when=condition,
             ))
             
         elif action_type == "rotate_secret":
@@ -79,7 +80,7 @@ def feedback_to_ansible_tasks(feedback: dict[str, Any]) -> list[AnsibleTask]:
                     "cmd": f"C:\\scripts\\rotate-secret.ps1 -SecretName {target}",
                 },
                 become=True,
-                when=priority == "immediate",
+                when=condition,
             ))
             
         elif action_type == "review_firewall_rules":
@@ -91,7 +92,7 @@ def feedback_to_ansible_tasks(feedback: dict[str, Any]) -> list[AnsibleTask]:
                     "cmd": f"C:\\scripts\\review-firewall.ps1 -Target {target}",
                 },
                 become=True,
-                when=priority == "high",
+                when=condition,
             ))
             
         elif action_type == "review_ad_configuration":
@@ -103,7 +104,7 @@ def feedback_to_ansible_tasks(feedback: dict[str, Any]) -> list[AnsibleTask]:
                     "cmd": "C:\\scripts\\review-ad-config.ps1",
                 },
                 become=True,
-                when=priority == "high",
+                when=condition,
             ))
     
     return tasks
